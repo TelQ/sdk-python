@@ -104,7 +104,7 @@ class TelQTelecomAPI:
     schemes = None
     _last_time_authenticated = None
 
-    def __init__(self, api_version: str = "v2.1", host: str = None, schemes: str = None) -> None:
+    def __init__(self, api_version: str = "v2.1") -> None:
         self.api_version = api_version
         self.host = host
 
