@@ -3,6 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 from telq import TelQTelecomAPI
+from telq.tests import Test
 
 # path to the environment variables where the App Id and App Key is stored
 dotenv_path = os.path.abspath(
@@ -163,6 +164,32 @@ def test_tests_5(telq_api):
             "portedFromMnc": None,
             "portedFromProviderName": None,
         },
+    ]
+    telq_api.initiate_new_tests(list_of_networks)
+    assert True
+
+
+def test_tests_6(telq_api):
+    tests = [Test(
+        sender="Google",
+        text="This is sample message",
+        testIdTextType="ALPHA",
+        testIdTextCase="LOWER",
+        testIdTextLength=7,
+        supplierId=2089,
+        mcc="412",
+        mnc="88",
+        portedFromMnc="88"
+    )]
+    telq_api.initiate_new_batch_tests(tests)
+
+
+def test_tests_7(telq_api):
+    """Test the tests endpoint with a list of networks with phone number"""
+    list_of_networks = [
+        {
+            "phoneNumber": "77055626363"
+        }
     ]
     telq_api.initiate_new_tests(list_of_networks)
     assert True

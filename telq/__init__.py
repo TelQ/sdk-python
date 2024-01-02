@@ -4,7 +4,9 @@ from typing import Dict, List, Union
 import telq.authentication as authentication
 import telq.networks as networks
 import telq.results as results
-import telq.tests as tests
+from telq.tests import Test
+from telq.tests import Tests
+from telq.tests import BatchTests
 
 
 class TelQTelecomAPI:
@@ -98,10 +100,13 @@ class TelQTelecomAPI:
      'pdusDelivered': []}
     """
 
+    host = None
+    schemes = None
     _last_time_authenticated = None
 
-    def __init__(self, api_version: str = "v2.1") -> None:
+    def __init__(self, api_version: str = "v2.1", host: str = None, schemes: str = None) -> None:
         self.api_version = api_version
+        self.host = host
 
     def authenticate(self, api_id: str, api_key: str):
         """Authenticates the App Id and Key.
@@ -188,7 +193,7 @@ class TelQTelecomAPI:
             The callback URL where you would like to receive TestResult updates 
             anytime your tests status changes, by default None
         maxCallbackRetries : int, optional
-            The maximum number of attemps you want us to try when calling your "callback url" with updates. 
+            The maximum number of attempts you want us to try when calling your "callback url" with updates. 
             Maximum is 5, by default 3
         testIdTextType : str, optional
             The type of testIdText to use in this test. 
@@ -215,7 +220,7 @@ class TelQTelecomAPI:
             When an error occurs, the associated error is returned
         """ ""
         try:
-            test_network = tests.Tests(self._authenticated)
+            test_network = Tests(self._authenticated)
         except AttributeError:
             raise RuntimeError(
                 "You must be authenticated first - call the authenticate method passing your App Id and Key "
@@ -228,6 +233,113 @@ class TelQTelecomAPI:
             testIdTextCase,
             testIdTextLength,
             testTimeToLiveInSeconds,
+        )
+
+    def initiate_new_batch_tests(
+            self,
+            tests: List[Test],
+            resultsCallbackUrl: Union[str, None] = None,
+            resultsCallbackToken: str = None,
+            maxCallbackRetries: int = 1,
+            dataCoding: str = "01",
+            sourceTon: str = "00",
+            sourceNpi: str = "12",
+            testTimeToLiveInSeconds: int = 600,
+            validityPeriod: int = 120,
+            scheduledDeliveryTime: str = None,
+            replaceIfPresentFlag: int = 0,
+            priorityFlag: int = 1,
+            sendTextAsMessagePayloadTlv: int = 0,
+            commentText: str = None,
+            tlv: List[Dict[str, str]] = None,
+            udh: List[Dict[str, str]] = None
+    ) -> List[Dict[str, str]]:
+        """Initiate a new lnt batch tests
+
+        Parameters
+        ----------
+        tests : List[Test]
+            List of tests in a batch. Test should be represented with Test class
+        resultsCallbackUrl : Union[str, None], optional
+            The callback URL where you would like to receive TestResult updates 
+            anytime your tests status changes, by default None
+        resultsCallbackToken : str, optional
+            If you would like to authenticate our Test Results Callbacks, you can send an authentication 
+            token in this parameter. It will be included as the Authorization bearer token of the callbacks 
+            we make to your server.
+        maxCallbackRetries : int, optional
+            The maximum number of attempts you want us to try when calling your "callback url" with updates. 
+            Maximum is 5, by default 1
+        dataCoding : str, optional
+            TODO: add description here
+            Options are: 
+        sourceTon : str, optional
+            TODO: add description here
+            Applies only to ALPHA and ALPHA_NUMERIC types. Options are: "UPPER", "LOWER", "MIXED", by default "MIXED"
+        sourceNpi : int, optional
+            The TON value
+            Doesn't apply to WHATSAPP_CODE type, since it has a fixed length of 7, by default 10
+        testTimeToLiveInSeconds : int, optional
+            The maximum amount of time you want your tests to wait for a message. 
+            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        validityPeriod : int, optional
+            TODO: add description here
+            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        scheduledDeliveryTime : str, optional
+            The SMPP delivery time format. It should follow the format YYMMDDhhmmsstnnp. 
+            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        replaceIfPresentFlag : int, optional
+            TODO: add description here
+            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        priorityFlag : int, optional
+            TODO: add description here
+            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        sendTextAsMessagePayloadTlv : int, optional
+            TODO: add description here
+            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        commentText : str, optional
+            The comment that can be attached to the tests
+        tlv : List[Dict[str, str], optional
+            Tlv value for the tests. The datatype for this type is List[Dict]. Dict should 
+            contain tagHex and valueHex values.
+        udh : List[Dict[str, str], optional
+            Udh value for the tests. The datatype for this type is List[Dict]. Dict should 
+            contain tagHex and valueHex values.
+
+        Returns
+        -------
+        JSON Response
+            The Response consists of an array of Test objects, containing each a destinationNetwork 
+            and details about the test request. Here is a description of each of the keys contained by a Test object:
+
+        Raises
+        ------
+        Exception
+            When an error occurs, the associated error is returned
+        """ ""
+        try:
+            test = BatchTests(self._authenticated)
+        except AttributeError:
+            raise RuntimeError(
+                "You must be authenticated first - call the authenticate method passing your App Id and Key "
+            )
+        return test.initiate_new_tests(
+            tests,
+            resultsCallbackUrl,
+            resultsCallbackToken,
+            maxCallbackRetries,
+            dataCoding,
+            sourceTon,
+            sourceNpi,
+            testTimeToLiveInSeconds,
+            validityPeriod,
+            scheduledDeliveryTime,
+            replaceIfPresentFlag,
+            priorityFlag,
+            sendTextAsMessagePayloadTlv,
+            commentText,
+            tlv,
+            udh
         )
 
     def get_test_results(self, id: int) -> Dict[str, str]:

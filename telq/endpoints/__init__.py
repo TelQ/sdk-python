@@ -54,6 +54,12 @@ class TestsURL(TelQURL):
     def path(self) -> str:
         return "/tests"
 
+class TestsBatchURL(TelQURL):
+    """Endpoint for tests"""
+
+    def path(self) -> str:
+        return "/lnt/tests"
+
 
 class ResultsURL(TelQURL):
     """Endpoint for results"""
