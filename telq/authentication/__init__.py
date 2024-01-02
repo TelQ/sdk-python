@@ -32,7 +32,7 @@ class Authentication:
 
     api_id: str
     api_key: str
-    api_version: str = "v2.1"
+    api_version: str = "v2.2"
 
     def __post_init__(self) -> None:
         self.headers = {
@@ -45,7 +45,7 @@ class Authentication:
 
     def _validate_api_version(self) -> None:
         _deprecated_versions = ["v1.0", "v1.1", "v1.2", "v1.3", "v1.4"]
-        _currently_supported_versions = ["v1.5", "v2.1"]
+        _currently_supported_versions = ["v1.5", "v2.1", "v2.2"]
 
         if self.api_version in _deprecated_versions:
             warnings.warn(
@@ -56,7 +56,7 @@ class Authentication:
             pass
         else:
             raise ValueError(
-                "Invalid TelQ API selected - choose a version like 'v2.1' or 'v1.5' and so on - see our documentation for more information"
+                "Invalid TelQ API selected - choose a version like 'v2.2' or 'v1.5' and so on - see our documentation for more information"
             )
 
     def _authenticate_user(self) -> None:

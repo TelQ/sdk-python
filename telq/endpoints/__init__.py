@@ -14,13 +14,13 @@ class TelQURL(ABC):
     Parameters
     ----------
     api_version : str
-        API version, for example: 'v1.5', defaults to 'v2.1'
+        API version, for example: 'v1.5', defaults to 'v2.2'
     """ ""
 
     schemes = "https"
     host = "api.telqtele.com"
 
-    def __init__(self, api_version: str = "v2.1"):
+    def __init__(self, api_version: str = "v2.2"):
         self.base_path = f"/{api_version}/client"
 
     def create_base_url(self):

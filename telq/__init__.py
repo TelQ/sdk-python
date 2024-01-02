@@ -22,8 +22,8 @@ class TelQTelecomAPI:
 
     Parameters
     ----------
-    api_version : str, default 'v2.1'
-        API version to use, defaults to version 'v2.1'
+    api_version : str, default 'v2.2'
+        API version to use, defaults to version 'v2.2'
         Versions 1.0, 1.1, 1.2, 1.3 and 1.4 have been deprecated. This means no new development or bug fixes
         will occur on those versions, but they will continue to be supported
         by our app through 2021. We may stop supporting them at some point in the future
@@ -104,7 +104,7 @@ class TelQTelecomAPI:
     schemes = None
     _last_time_authenticated = None
 
-    def __init__(self, api_version: str = "v2.1") -> None:
+    def __init__(self, api_version: str = "v2.2") -> None:
         self.api_version = api_version
         self.host = host
 
