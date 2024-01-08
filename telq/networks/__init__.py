@@ -34,7 +34,7 @@ class Networks:
 
     def get_networks(self):
         """Retrieves a list with all our currently available Networks"""
-        url = NetworksURL(self._authentication.api_version).url()
+        url = NetworksURL(self._authentication.base_url, self._authentication.api_version).url()
         method = "GET"
         headers = {
             "accept": "application/json",

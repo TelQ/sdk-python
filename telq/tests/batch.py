@@ -106,7 +106,7 @@ class BatchTests:
         Exception
             When an error occurs, the associated error is returned
         """ ""
-        url = TestsBatchURL(self._authentication.api_version).url()
+        url = TestsBatchURL(self._authentication.base_url, self._authentication.api_version).url()
         method = "POST"
         headers = {
             "accept": "*/*",
@@ -140,9 +140,9 @@ class BatchTests:
 
         res = response.json()
         try:
-            if 'error' in res:
+            if 'error' in res and res['error'] is not None:
                 err = res['message'] if 'message' in res else res['error']
-                raise ValueError(err)
+                raise ValueError("status_code=" + str(response.status_code) + "; message=" + str(err))
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
             raise e

@@ -18,7 +18,7 @@ class TelQTelecomAPI:
 
     NOTES
     ----------
-    Please kindly be informed that this Python SDK supports API version 2.1 only
+    Please kindly be informed that this Python SDK supports API version version from 2.1 only
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ class TelQTelecomAPI:
     Examples
     --------
     Initialise the TelQTelecomAPI class
-    >>> telq_api = TelQTelecomAPI()
+    >>> telq_api = TelQTelecomAPI(base_url="https://api.telqtele.com")
 
     Authenticate the TelQ API by simply passing your App Id and App Key.
     If there are no errors, it means you have been authenticated.
@@ -81,7 +81,7 @@ class TelQTelecomAPI:
 
     Test Results
 
-    >>> telq_api.get_test_results(id=13754642)
+    >>> telq_api.get_test_results(test_id=13754642)
     {'id': 13754642,
      'testIdText': 'woOMJtrQAy',
      'senderDelivered': None,
@@ -100,13 +100,11 @@ class TelQTelecomAPI:
      'pdusDelivered': []}
     """
 
-    host = None
-    schemes = None
     _last_time_authenticated = None
 
-    def __init__(self, api_version: str = "v2.2") -> None:
+    def __init__(self, base_url: str = "https://api.telqtele.com", api_version: str = "v2.2") -> None:
         self.api_version = api_version
-        self.host = host
+        self.base_url = base_url
 
     def authenticate(self, api_id: str, api_key: str):
         """Authenticates the App Id and Key.
@@ -134,13 +132,13 @@ class TelQTelecomAPI:
             # if 24 hours has elapased
             else:
                 self._authenticated = authentication.Authentication(
-                    api_id=api_id, api_key=api_key, api_version=self.api_version
+                    api_id=api_id, api_key=api_key, api_version=self.api_version, base_url=self.base_url
                 )
                 self._last_time_authenticated = dt.datetime.now()
         except AttributeError:
             # if the user has never been authenticated
             self._authenticated = authentication.Authentication(
-                api_id=api_id, api_key=api_key, api_version=self.api_version
+                api_id=api_id, api_key=api_key, api_version=self.api_version, base_url=self.base_url
             )
             self._last_time_authenticated = dt.datetime.now()
 
@@ -342,12 +340,12 @@ class TelQTelecomAPI:
             udh
         )
 
-    def get_test_results(self, id: int) -> Dict[str, str]:
+    def get_test_results(self, test_id: int) -> Dict[str, str]:
         """Retrieve the Test Results from the id from the initiate_new_tests method
 
         Parameters
         ----------
-        id : int
+        test_id : int
             id from the response of the initiate_new_tests method
 
         Returns
@@ -360,4 +358,33 @@ class TelQTelecomAPI:
             raise RuntimeError(
                 "You must be authenticated first - call the authenticate method passing your App Id and Key "
             )
-        return results_.get_test_results(id)
+        return results_.get_test_results(test_id)
+
+    def get_batch_test_results(self, date_from: str = None, date_to: str = None, page: int = 1,
+                               size: int = 100, order: str = "asc"):
+        """Retrieve the Test Results from the id from the initiate_new_tests method
+
+        Parameters
+        ----------
+        date_from : str
+            Specifies the start date and time for the range filter. ISO 8601 format
+        date_to: str
+            Specifies the end date and time for the range filter. ISO 8601 format
+        page: int
+            Specifies page for page test results
+        size: int
+            Specifies number of test results per page
+        order: str
+            Specifies order of the test results by id
+
+        Returns
+        -------
+        Dict[str, str]
+        """ ""
+        try:
+            results_ = results.Results(self._authenticated)
+        except AttributeError:
+            raise RuntimeError(
+                "You must be authenticated first - call the authenticate method passing your App Id and Key "
+            )
+        return results_.get_batch_test_results(date_from, date_to, page, size, order)

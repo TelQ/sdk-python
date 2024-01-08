@@ -74,7 +74,7 @@ class Tests:
         Exception
             When an error occurs, the associated error is returned
         """ ""
-        url = TestsURL(self._authentication.api_version).url()
+        url = TestsURL(self._authentication.base_url, self._authentication.api_version).url()
         method = "POST"
         headers = {
             "accept": "*/*",
@@ -118,7 +118,6 @@ class Tests:
                 "destinationNetworks is a list of networks you want to issue tests to, ensure its a list"
             )
         for network in destinationNetworks:
-            print(network)
             if not {"mcc", "mnc"}.issubset(network) and not {"phoneNumber"}.issubset(network):
                 raise KeyError(
                     "destinationNetworks is missing one or two required parameters ('mcc' or 'mnc') or 'phoneNumber'"

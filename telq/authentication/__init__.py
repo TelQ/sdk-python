@@ -23,6 +23,8 @@ class Authentication:
         will occur on those versions, but they will continue to be supported
         by our app through 2021. We may stop supporting them at some point in the future
         but we will give ample warning to all our customers about it.
+    base_url : str, default 'https://api.telqtele.com'
+        Base URL for TelQ App
 
     Raises
     ------
@@ -32,6 +34,7 @@ class Authentication:
 
     api_id: str
     api_key: str
+    base_url: str
     api_version: str = "v2.2"
 
     def __post_init__(self) -> None:
@@ -39,7 +42,7 @@ class Authentication:
             "accept": "application/json",
             "Content-Type": "application/json",
         }
-        self.data = {"appId": self.api_id, "appKey": self.api_key}
+        self.data = {"appId": self.api_id, "appKey": self.api_key, "baseUrl": self.base_url}
         self._validate_api_version()
         self._authenticate_user()
 
@@ -61,7 +64,7 @@ class Authentication:
 
     def _authenticate_user(self) -> None:
         # pass App Id and App Key to the token endpoint to authenticate user
-        url = endpoints.TokenURL(self.api_version).url()
+        url = endpoints.TokenURL(self.base_url, self.api_version).url()
         method = "POST"
         response = requests.request(method, url, headers=self.headers, json=self.data)
 
