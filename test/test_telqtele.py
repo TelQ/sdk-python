@@ -3,6 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 from telq import TelQTelecomAPI
+from telq.tests import Test
 
 # path to the environment variables where the App Id and App Key is stored
 dotenv_path = os.path.abspath(
@@ -14,12 +15,13 @@ load_dotenv(dotenv_path)
 
 API_ID = os.environ.get("api_id")
 API_KEY = os.environ.get("api_key")
+BASE_URL = os.environ.get("base_url", "https://api.telqtele.com")
 
 
 @pytest.fixture
 def telq_api():
     """Initialise the TelQTelecomAPI class and authenticate the user"""
-    telq_api = TelQTelecomAPI()
+    telq_api = TelQTelecomAPI(base_url=BASE_URL)
     telq_api.authenticate(api_id=API_ID, api_key=API_KEY)
     return telq_api
 
@@ -32,14 +34,14 @@ def test_invalid_app_id_or_app_key():
 
 def test_token():
     """Test the Token Endpoint with the correct app credentials"""
-    telq_api = TelQTelecomAPI()
+    telq_api = TelQTelecomAPI(base_url=BASE_URL)
     telq_api.authenticate(api_id=API_ID, api_key=API_KEY)
     assert True
 
 
 def test_networks_1():
     """Test the networks endpoint when the user is not authenticated"""
-    telq_api = TelQTelecomAPI()
+    telq_api = TelQTelecomAPI(base_url=BASE_URL)
     with pytest.raises(RuntimeError):
         _ = telq_api.get_networks()
     assert True
@@ -163,6 +165,37 @@ def test_tests_5(telq_api):
             "portedFromMnc": None,
             "portedFromProviderName": None,
         },
+    ]
+    telq_api.initiate_new_tests(list_of_networks)
+    assert True
+
+
+def test_tests_6(telq_api):
+    tests = [Test(
+        sender="Google",
+        text="This is sample message",
+        testIdTextType="ALPHA",
+        testIdTextCase="LOWER",
+        testIdTextLength=7,
+        supplierId=6,
+        mcc="276",
+        mnc="02",
+        portedFromMnc=None
+    )]
+    telq_api.initiate_new_batch_tests(tests)
+
+
+def test_tests_7(telq_api):
+    telq_api.get_batch_test_results()
+    assert True
+
+
+def test_tests_8(telq_api):
+    """Test the tests endpoint with a list of networks with phone number"""
+    list_of_networks = [
+        {
+            "phoneNumber": "77055626363"
+        }
     ]
     telq_api.initiate_new_tests(list_of_networks)
     assert True

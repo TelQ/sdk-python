@@ -23,6 +23,8 @@ class Authentication:
         will occur on those versions, but they will continue to be supported
         by our app through 2021. We may stop supporting them at some point in the future
         but we will give ample warning to all our customers about it.
+    base_url : str, default 'https://api.telqtele.com'
+        Base URL for TelQ App
 
     Raises
     ------
@@ -32,20 +34,21 @@ class Authentication:
 
     api_id: str
     api_key: str
-    api_version: str = "v2.1"
+    base_url: str
+    api_version: str = "v2.2"
 
     def __post_init__(self) -> None:
         self.headers = {
             "accept": "application/json",
             "Content-Type": "application/json",
         }
-        self.data = {"appId": self.api_id, "appKey": self.api_key}
+        self.data = {"appId": self.api_id, "appKey": self.api_key, "baseUrl": self.base_url}
         self._validate_api_version()
         self._authenticate_user()
 
     def _validate_api_version(self) -> None:
         _deprecated_versions = ["v1.0", "v1.1", "v1.2", "v1.3", "v1.4"]
-        _currently_supported_versions = ["v1.5", "v2.1"]
+        _currently_supported_versions = ["v1.5", "v2.1", "v2.2"]
 
         if self.api_version in _deprecated_versions:
             warnings.warn(
@@ -56,12 +59,12 @@ class Authentication:
             pass
         else:
             raise ValueError(
-                "Invalid TelQ API selected - choose a version like 'v2.1' or 'v1.5' and so on - see our documentation for more information"
+                "Invalid TelQ API selected - choose a version like 'v2.2' or 'v1.5' and so on - see our documentation for more information"
             )
 
     def _authenticate_user(self) -> None:
         # pass App Id and App Key to the token endpoint to authenticate user
-        url = endpoints.TokenURL(self.api_version).url()
+        url = endpoints.TokenURL(self.base_url, self.api_version).url()
         method = "POST"
         response = requests.request(method, url, headers=self.headers, json=self.data)
 
