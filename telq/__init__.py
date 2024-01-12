@@ -243,7 +243,7 @@ class TelQTelecomAPI:
             sourceTon: str = "00",
             sourceNpi: str = "12",
             testTimeToLiveInSeconds: int = 600,
-            validityPeriod: int = 120,
+            smppValidityPeriod: int = 120,
             scheduledDeliveryTime: str = None,
             replaceIfPresentFlag: int = 0,
             priorityFlag: int = 1,
@@ -280,7 +280,7 @@ class TelQTelecomAPI:
         testTimeToLiveInSeconds : int, optional
             The maximum amount of time you want your tests to wait for a message. 
             Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
-        validityPeriod : int, optional
+        smppValidityPeriod : int, optional
             TODO: add description here
             Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
         scheduledDeliveryTime : str, optional
@@ -330,7 +330,7 @@ class TelQTelecomAPI:
             sourceTon,
             sourceNpi,
             testTimeToLiveInSeconds,
-            validityPeriod,
+            smppValidityPeriod,
             scheduledDeliveryTime,
             replaceIfPresentFlag,
             priorityFlag,

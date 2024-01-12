@@ -34,7 +34,7 @@ class BatchTests:
         sourceTon: str = "00",
         sourceNpi: str = "12",
         testTimeToLiveInSeconds: int = 600,
-        validityPeriod: int = 120,
+        smppValidityPeriod: int = 120,
         scheduledDeliveryTime: str = "2209131247000000",
         replaceIfPresentFlag: int = 0,
         priorityFlag: int = 1,
@@ -71,7 +71,7 @@ class BatchTests:
         testTimeToLiveInSeconds : int, optional
             The maximum amount of time you want your tests to wait for a message. 
             Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
-        validityPeriod : int, optional
+        smppValidityPeriod : int, optional
             TODO: add description here
             Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
         scheduledDeliveryTime : str, optional
@@ -125,7 +125,7 @@ class BatchTests:
             sourceTon,
             sourceNpi,
             testTimeToLiveInSeconds,
-            validityPeriod,
+            smppValidityPeriod,
             scheduledDeliveryTime,
             replaceIfPresentFlag,
             priorityFlag,
@@ -157,7 +157,7 @@ class BatchTests:
         sourceTon: str,
         sourceNpi: str,
         testTimeToLiveInSeconds: int,
-        validityPeriod: int,
+        smppValidityPeriod: int,
         scheduledDeliveryTime: str,
         replaceIfPresentFlag: int,
         priorityFlag: int,
@@ -185,7 +185,7 @@ class BatchTests:
             "sourceTon": sourceTon,
             "sourceNpi": sourceNpi,
             "testTimeToLiveInSeconds": testTimeToLiveInSeconds,
-            "validityPeriod": validityPeriod,
+            "smppValidityPeriod": smppValidityPeriod,
             "scheduledDeliveryTime": scheduledDeliveryTime,
             "replaceIfPresentFlag": replaceIfPresentFlag,
             "priorityFlag": priorityFlag,
