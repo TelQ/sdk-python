@@ -19,11 +19,12 @@ jobs:
           poetry install
       - name: Build
         run: |
-          poetry build 
+          poetry build
           poetry install
       - name: Run tests
         env:
           api_id: ${{ secrets.TEST_API_ID }}
           api_key: ${{ secrets.TEST_API_KEY }}
+          base_url: ${{ env.TEST_BASE_URL }}
         run: |
           poetry run pytest
