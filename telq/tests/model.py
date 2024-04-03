@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -11,4 +12,4 @@ class Test:
     supplierId: int
     mcc: str
     mnc: str
-    portedFromMnc: str
+    portedFromMnc: Optional[str] = None

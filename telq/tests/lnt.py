@@ -1,12 +1,11 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-import requests
-import telq.authentication as authentication
-from telq.endpoints import TestsBatchURL
+from telq.endpoints import BatchResultsURL, TestsBatchURL
 from telq.tests.model import Test
+from telq.util.rest import TelQRest
 
 
-class BatchTests:
+class LNT(TelQRest):
     """ Launch batch tests with LNT API
 
     Parameters
@@ -17,31 +16,28 @@ class BatchTests:
     Raises
     ------
     Exception
-        The Exception will display the error code and the message. 
+        The Exception will display the error code and the message.
         This will happen If there is an error with your request
     """ ""
-
-    def __init__(self, authentication: authentication.Authentication):
-        self._authentication = authentication
 
     def initiate_new_tests(
         self,
         tests: List[Test],
         resultsCallbackUrl: Union[str, None] = None,
-        resultsCallbackToken: str = None,
-        maxCallbackRetries: int = 1,
+        resultsCallbackToken: Optional[str] = None,
+        maxCallbackRetries: int = 3,
         dataCoding: str = "01",
         sourceTon: str = "00",
         sourceNpi: str = "12",
-        testTimeToLiveInSeconds: int = 600,
-        smppValidityPeriod: int = 120,
-        scheduledDeliveryTime: str = "2209131247000000",
+        testTimeToLiveInSeconds: int = 3600,
+        smppValidityPeriod: int = 60,
+        scheduledDeliveryTime: Optional[str] = None,
         replaceIfPresentFlag: int = 0,
         priorityFlag: int = 1,
         sendTextAsMessagePayloadTlv: int = 0,
-        commentText: str = None,
-        tlv: List[Dict[str, str]] = None,
-        udh: List[Dict[str, str]] = None,
+        commentText: Optional[str] = None,
+        tlv: Optional[List[Dict[str, str]]] = None,
+        udh: Optional[List[Dict[str, str]]] = None,
     ):
         """Initiate a new lnt batch tests
 
@@ -50,55 +46,52 @@ class BatchTests:
         tests : List[Test]
             List of tests in a batch. Test should be represented with Test class
         resultsCallbackUrl : Union[str, None], optional
-            The callback URL where you would like to receive TestResult updates 
+            The callback URL where you would like to receive TestResult updates
             anytime your tests status changes, by default None
         resultsCallbackToken : str, optional
-            If you would like to authenticate our Test Results Callbacks, you can send an authentication 
-            token in this parameter. It will be included as the Authorization bearer token of the callbacks 
+            If you would like to authenticate our Test Results Callbacks, you can send an authentication
+            token in this parameter. It will be included as the Authorization bearer token of the callbacks
             we make to your server.
         maxCallbackRetries : int, optional
-            The maximum number of attempts you want us to try when calling your "callback url" with updates. 
-            Maximum is 5, by default 1
+            The maximum number of attempts you want us to try when calling your "callback url" with updates, min. 0 and max. 5. Default is 3.
         dataCoding : str, optional
-            TODO: add description here
-            Options are: 
+            SMPP data_coding parameter
+            The allowed values are: [00, 01, 03, 08, F0]
+            If not specified, our system will determine the appropriate setting based on the sender and text parameters.
         sourceTon : str, optional
-            TODO: add description here
-            Applies only to ALPHA and ALPHA_NUMERIC types. Options are: "UPPER", "LOWER", "MIXED", by default "MIXED"
-        sourceNpi : int, optional
-            The TON value
-            Doesn't apply to WHATSAPP_CODE type, since it has a fixed length of 7, by default 10
+            SMPP source_addr_ton parameter
+            The allowed values are: [00, 01, 02, 03, 04, 05, 06]
+            If not specified, our system will determine the appropriate setting based on the sender parameter.
+        sourceNpi : int
+            SMPP source_addr_npi parameter
+            The allowed values are: [00, 01, 03, 04, 06, 08, 09, 0A, 0E, 12]
+            If not specified, our system will determine the appropriate setting based on the sender parameter, optional
         testTimeToLiveInSeconds : int, optional
-            The maximum amount of time you want your tests to wait for a message. 
-            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+            The time to live (TTL) for the test, in seconds,
+            min. 60(1 min) and max. 10800(3h). Default is 3600(1h)
         smppValidityPeriod : int, optional
-            TODO: add description here
-            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+            SMPP validity_period parameter in s,
+            min. 60(1 min) and max. 86400(1 day)
         scheduledDeliveryTime : str, optional
-            The SMPP delivery time format. It should follow the format YYMMDDhhmmsstnnp. 
-            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+            SMPP schedule_delivery_time parameter
         replaceIfPresentFlag : int, optional
-            TODO: add description here
-            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+            SMPP replace_if_present_flag parameter
         priorityFlag : int, optional
-            TODO: add description here
-            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+            SMPP priority_flag parameter
         sendTextAsMessagePayloadTlv : int, optional
-            TODO: add description here
-            Default is 1 hour. (Minimum of 1 minute, maximum of 3 hours), by default 3600
+        	Send text as message payload TLV
         commentText : str, optional
-            The comment that can be attached to the tests
+            Custom comment associated with the test
         tlv : List[Dict[str, str], optional
-            Tlv value for the tests. The datatype for this type is List[Dict]. Dict should 
-            contain tagHex and valueHex values.
+            An array of TLV values defined in HEX format for the supplier as: tagHex and valueHex
         udh : List[Dict[str, str], optional
-            Udh value for the tests. The datatype for this type is List[Dict]. Dict should 
+            Udh value for the tests. The datatype for this type is List[Dict]. Dict should
             contain tagHex and valueHex values.
 
         Returns
         -------
         JSON Response
-            The Response consists of an array of Test objects, containing each a destinationNetwork 
+            The Response consists of an array of Test objects, containing each a destinationNetwork
             and details about the test request. Here is a description of each of the keys contained by a Test object:
 
         Raises
@@ -108,14 +101,10 @@ class BatchTests:
         """ ""
         url = TestsBatchURL(self._authentication.base_url, self._authentication.api_version).url()
         method = "POST"
-        headers = {
-            "accept": "*/*",
-            "Content-Type": "application/json",
-            "Authorization": self._authentication._bearer_token
-        }
+        extra_headers = {}
 
         if resultsCallbackToken:
-            headers["results-callback-token"] = resultsCallbackToken
+            extra_headers["results-callback-token"] = resultsCallbackToken
 
         data = self._validate_parse_data(
             tests,
@@ -134,19 +123,15 @@ class BatchTests:
             tlv,
             udh
         )
-        print(data)
+        return self.request(url, method, data, extra_headers=extra_headers)
 
-        response = requests.request(method, url, headers=headers, json=data)
 
-        res = response.json()
-        try:
-            if 'error' in res and res['error'] is not None:
-                err = res['message'] if 'message' in res else res['error']
-                raise ValueError("status_code=" + str(response.status_code) + "; message=" + str(err))
-            response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            raise e
-        return res
+    def get_test_results(self, date_from: Optional[str] = None, date_to: Optional[str] = None, page: int = 1, size: int = 100, order: str = "asc"):
+        url = (BatchResultsURL(self._authentication.base_url, self._authentication.api_version)
+               .url(date_from, date_to, page, size, order))
+        method = "GET"
+        return self.request(url, method)
+
 
     def _validate_parse_data(
         self,
@@ -158,13 +143,13 @@ class BatchTests:
         sourceNpi: str,
         testTimeToLiveInSeconds: int,
         smppValidityPeriod: int,
-        scheduledDeliveryTime: str,
+        scheduledDeliveryTime: Optional[str],
         replaceIfPresentFlag: int,
         priorityFlag: int,
         sendTextAsMessagePayloadTlv: int,
-        commentText: str,
-        tlv: List[Dict[str, str]],
-        udh: List[Dict[str, str]]
+        commentText: Optional[str],
+        tlv: Optional[List[Dict[str, str]]],
+        udh: Optional[List[Dict[str, str]]]
     ) -> Dict[str, str]:
         if len(tests) == 0:
             raise KeyError(

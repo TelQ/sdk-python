@@ -17,8 +17,8 @@ class Authentication:
         You can find your AppId and generate your AppKey on the API Menu of the TelQ App.
     api_key : str
         Your AppKey gotten from the API Menu of the TelQ App
-    api_version : str, default 'v2.1'
-        API version to use, defaults to version 'v2.1'
+    api_version : str, default 'v3'
+        API version to use, defaults to version 'v3'
         Versions 1.0, 1.1, 1.2, 1.3 and 1.4 have been deprecated. This means no new development or bug fixes
         will occur on those versions, but they will continue to be supported
         by our app through 2021. We may stop supporting them at some point in the future
@@ -35,7 +35,7 @@ class Authentication:
     api_id: str
     api_key: str
     base_url: str
-    api_version: str = "v2.2"
+    api_version: str = "v3"
 
     def __post_init__(self) -> None:
         self.headers = {
@@ -48,7 +48,7 @@ class Authentication:
 
     def _validate_api_version(self) -> None:
         _deprecated_versions = ["v1.0", "v1.1", "v1.2", "v1.3", "v1.4"]
-        _currently_supported_versions = ["v1.5", "v2.1", "v2.2"]
+        _currently_supported_versions = ["v1.5", "v2.1", "v3"]
 
         if self.api_version in _deprecated_versions:
             warnings.warn(
