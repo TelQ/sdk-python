@@ -8,7 +8,7 @@ authors = ["Tuvshinbayar Davaa <tuvshinbayar.davaa@telqtele.com>"]
 python = "^3.7"
 python-dotenv = "^0.20.0"
 requests = "^2.27.1"
-pytest = "^7.1.2"
+pytest = "^7.2.0"
 
 [tool.poetry.dev-dependencies]
 
