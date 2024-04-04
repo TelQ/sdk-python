@@ -25,7 +25,6 @@ jobs:
         env:
           api_id: ${{ secrets.TEST_API_ID }}
           api_key: ${{ secrets.TEST_API_KEY }}
-          base_url: ${{ env.TEST_BASE_URL }}
+          base_url: ${{ secrets.TEST_BASE_URL }}
         run: |
-          echo "${{ env.TEST_BASE_URL }}"
           poetry run pytest
