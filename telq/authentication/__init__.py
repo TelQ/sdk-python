@@ -4,6 +4,7 @@ import warnings
 import toml
 import requests
 import telq.endpoints as endpoints
+from telq.util.version import SDK_VERSION
 
 
 @dataclass
@@ -42,25 +43,11 @@ class Authentication:
         self.headers = {
             "accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": f"python-sdk/{self.__get_sdk_version__()}"
+            "User-Agent": f"python-sdk/{SDK_VERSION}"
         }
         self.data = {"appId": self.api_id, "appKey": self.api_key, "baseUrl": self.base_url}
         self._validate_api_version()
         self._authenticate_user()
-
-    def __get_sdk_version__(self):
-        pyproject_toml_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "pyproject.toml")
-        )
-        with open(pyproject_toml_path, "r") as file:
-            content = file.read()
-
-        # Parse the content using the toml library
-        data = toml.loads(content)
-
-        # Extract the version (assuming it's under [tool.poetry])
-        version = data["tool"]["poetry"]["version"]
-        return version
 
     def _validate_api_version(self) -> None:
         _deprecated_versions = ["v1.0", "v1.1", "v1.2", "v1.3", "v1.4"]
