@@ -32,7 +32,7 @@ class MT(TelQRest):
         testIdTextCase: str = "MIXED",
         testIdTextLength: int = 10,
         testTimeToLiveInSeconds: int = 3600,
-    ):
+    ) -> Dict:
         """Initiate a new test
 
         Parameters

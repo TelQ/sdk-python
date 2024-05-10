@@ -71,7 +71,7 @@ class ResultsURL(TelQURL):
     """Endpoint for results"""
 
     def path(self, test_id) -> str:
-        return f"/results/{test_id}"
+        return f"/tests/{test_id}"
 
 
 class BatchResultsURL(TelQURL):

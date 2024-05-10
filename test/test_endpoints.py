@@ -53,7 +53,7 @@ def test_tests_url_2():
 
 def test_results_url_1():
     actual = endpoints.ResultsURL(base_url=BASE_URL).url(test_id=5)
-    expected = f"{BASE_URL}/{DEFAULT_API_VERSION}/client/results/5"
+    expected = f"{BASE_URL}/{DEFAULT_API_VERSION}/client/tests/5"
     message = (
         f"API version {DEFAULT_API_VERSION} results endpoint received {actual} instead of {expected}"
     )
@@ -62,7 +62,7 @@ def test_results_url_1():
 
 def test_results_url_2():
     actual = endpoints.ResultsURL(base_url=BASE_URL, api_version="v1.5").url(test_id=908)
-    expected = f"{BASE_URL}/v1.5/client/results/908"
+    expected = f"{BASE_URL}/v1.5/client/tests/908"
     message = (
         f"API version v1.5 results endpoint received {actual} instead of {expected}"
     )

@@ -91,7 +91,7 @@ def test_tests_3(telq_api: TelQTelecomAPI):
         }
     ]
 
-    telq_api.mt.initiate_new_tests(
+    test_id = telq_api.mt.initiate_new_tests(
         destinationNetworks=destinationNetworks,
         resultsCallbackUrl="https://my-callback-url.com/telq_result",
         maxCallbackRetries=3,
@@ -99,7 +99,9 @@ def test_tests_3(telq_api: TelQTelecomAPI):
         testIdTextCase="MIXED",
         testIdTextLength=7,
         testTimeToLiveInSeconds=3000,
-    )
+    ).get('response')[0].get('id', 0)
+    assert test_id != 0
+    telq_api.mt.get_test_results(test_id)
     assert True
 
 
