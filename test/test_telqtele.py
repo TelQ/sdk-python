@@ -55,7 +55,8 @@ def test_tests_1(telq_api: TelQTelecomAPI):
         }
     ]
 
-    telq_api.mt.initiate_new_tests(single_network)
+    response = telq_api.mt.initiate_new_tests(single_network)
+    telq_api.mt.get_test_results(int(response.get('response', [])[0].get('id', 0)))
     assert True
 
 
