@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set version
+        run: |
+          echo "SDK_VERSION=\"$(poetry version | awk '{print $NF}')\"" > telq/util/version.py
       - name: Publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         uses: JRubics/poetry-publish@v1.12
