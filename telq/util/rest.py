@@ -1,9 +1,7 @@
-from abc import ABC
-import os
-import requests
-import toml
 from typing import Optional
+from abc import ABC
 
+import requests
 from requests.exceptions import JSONDecodeError
 
 from telq.authentication import Authentication
