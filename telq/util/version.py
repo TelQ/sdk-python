@@ -1,1 +1,1 @@
-SDK_VERSION="1.3.2"
+SDK_VERSION="this value will be set by CI"
