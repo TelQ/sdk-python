@@ -16,7 +16,9 @@ jobs:
         uses: abatilo/actions-poetry@v2.4.0
       - name: Set version
         run: |
+          poetry version
           echo "SDK_VERSION=\"$(poetry version | awk '{print $NF}')\"" > telq/util/version.py
+          cat telq/util/version.py
       - name: Install dependencies
         run: |
           poetry install
