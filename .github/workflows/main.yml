@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.4.0
       - name: Set version
         run: |
           poetry version
